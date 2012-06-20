@@ -6,6 +6,7 @@
 
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/lib/data-structure.js"></script>
+    <script type="text/javascript" src="js/ui/editor.js"></script>
     <script type="text/javascript" language="javascript">
         $(function () {
             $("#content").click(function (event) {
@@ -17,6 +18,9 @@
             $("textarea").keyup(function (e) {
                 $("#result1").text($(this).val().split("\n")[0]);
             });
+
+            var editor = new Editor();
+            editor.create().append($("body"));
         });
         var linkedList = new EditableLinkedList();
         linkedList.addNode(new EditableNode("abc"));
