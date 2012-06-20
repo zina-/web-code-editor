@@ -8,9 +8,14 @@
     <script type="text/javascript" src="js/lib/data-structure.js"></script>
     <script type="text/javascript" language="javascript">
         $(function () {
-            $("#result").text("result");
             $("#content").click(function (event) {
                 this;
+            });
+            $("textarea").keypress(function (e) {
+                $("#result").text($("#result").text() + String.fromCharCode(e.which));
+            });
+            $("textarea").keyup(function (e) {
+                $("#result1").text($(this).val().split("\n")[0]);
             });
         });
         var linkedList = new EditableLinkedList();
@@ -21,7 +26,9 @@
 </head>
 <body>
     <textarea rows="20" cols="100"></textarea>
-    <div id="result" style="border:1px solid; height:20px; width:100px; display:block">
+    <div id="result" style="border:1px solid; height:20px; width:100px;">
+    </div>
+    <div id="result1" style="border:1px solid; height:20px; width:100px;">
     </div>
     <div id="content" contentEditable="true" style="border: 1px solid"></div>
 </body>
