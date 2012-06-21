@@ -1,17 +1,116 @@
 <!doctype html />
 <html>
 <head>
-    <title>
-    </title>
-
-    <script type="text/javascript" src="../src/client/js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="js/lib/data-structure.js"></script>
-    <script type="text/javascript" src="js/ui/editor.js"></script>
+    <title></title>
+    <script type="text/javascript" src="../src/lib/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="../src/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="../src/lib/backbone-min.js"></script>
+    <!--<script type="text/javascript" src="../src/core/editor-model.js"></script>
+    <script type="text/javascript" src="../src/core/editor-view.js"></script>-->
     <script type="text/javascript" language="javascript">
-    </script>
+        $(function () {
+            var Node = Backbone.Model.extend({
+                defaults: {
+                    line: "",
+                    lineNumber: 0
+                }
+            });
 
+            var NodeList = Backbone.Collection.extend({
+                model: Node
+            });
+
+            var NodeView = Backbone.View.extend({
+                //el: "div",
+                model: Node,
+                initialize: function () {
+                    this.model.bind("change", this.render, this);
+                },
+                render: function () {
+                    $(this.el).html("<div>" + this.model.get("lineNumber") + ". " + this.model.get("line") + "</div>");
+                    return this;
+                }
+            });
+
+            var NodeListView = Backbone.View.extend({
+                el: "body",
+                model: NodeList,
+                initialize: function () {
+                    this.model = new NodeList();
+                    this.model.bind("add", this.appendNode, this);
+                    //this.model.bind("remove", this.removeNode, this);
+
+                    this.lineCount = 0;
+
+                    this.addNode();
+                },
+                events: {
+                    "keypress": "keypress",
+                    "keydown": "keydown"
+                },
+                keypress: function (e) {
+                    //alert(String.fromCharCode(e.which));
+                    var node = this.model.where({ lineNumber: this.lineCount })[0];
+                    if (e.which == 13) {
+                        this.addNode();
+                    }
+                    /*else if (e.which == 9) {
+                    e.preventDefault();
+                    node.set({
+                    line: node.get("line") + "    "
+                    });
+                    }*/
+                    else {
+                        //var node = this.model.where({ lineNumber: this.lineCount })[0];
+                        node.set({
+                            line: node.get("line") + String.fromCharCode(e.which)
+                        });
+                    }
+                },
+                keydown: function (e) {
+                    if (e.which == 9) {
+                        e.preventDefault();
+                        var node = this.model.where({ lineNumber: this.lineCount })[0];
+                        node.set({
+                            line: node.get("line") + "\t"
+                        });
+                    }
+                },
+                addNode: function () {
+                    this.lineCount += 1;
+                    var node = new Node();
+                    node.set({
+                        lineNumber: this.lineCount
+                    });
+                    this.model.add(node);
+                },
+                appendNode: function (node) {
+                    var nodeView = new NodeView({
+                        model: node
+                    });
+                    $(this.el).append(nodeView.render().el);
+                }
+            });
+
+            //var nodeListView = new NodeListView();
+            //nodeListView.setElement($("body"));
+
+            var Workspace = Backbone.Router.extend({
+                routes: {
+                    "writer": "writer",
+                    "": ""
+                },
+                go: function () {
+                    var nodeListView = new NodeListView();
+                }
+            });
+
+            var app = new Workspace();
+            Backbone.history.start();
+        });
+    </script>
 </head>
 <body>
+    <!--<div style="width:100%; height:100%; position:fixed; left:0;top:0;overflow:hidden;"></div>-->
 </body>
-
 </html>
